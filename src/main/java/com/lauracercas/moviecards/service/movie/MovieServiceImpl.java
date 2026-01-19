@@ -1,10 +1,12 @@
 package com.lauracercas.moviecards.service.movie;
 
-
 import com.lauracercas.moviecards.model.Movie;
-import com.lauracercas.moviecards.repositories.MovieJPA;
-import org.springframework.stereotype.Service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,25 +17,36 @@ import java.util.List;
 @Service
 public class MovieServiceImpl implements MovieService {
 
-    private final MovieJPA movieJPA;
+    private RestTemplate template;
+    private final String movieUrl;
 
-    public MovieServiceImpl(MovieJPA movieJPA) {
-        this.movieJPA = movieJPA;
+    @Autowired
+    public MovieServiceImpl(RestTemplate template) {
+        this.template = template;
+        this.movieUrl = "https://moviecards-service-plaza.azurewebsites.net/movies";
     }
-
 
     @Override
     public List<Movie> getAllMovies() {
-        return movieJPA.findAll();
+        Movie[] movies = template.getForObject(this.movieUrl, Movie[].class);
+        List<Movie> movieList = Arrays.asList(movies);
+        return movieList;
     }
 
     @Override
     public Movie save(Movie movie) {
-        return movieJPA.save(movie);
+        if (movie.getId() != null && movie.getId() > 0) {
+            template.put(this.movieUrl, movie);
+        } else {
+            movie.setId(0);
+            template.postForObject(this.movieUrl, movie, String.class);
+        }
+        return movie;
     }
 
     @Override
     public Movie getMovieById(Integer movieId) {
-        return movieJPA.getById(movieId);
+        Movie movie = template.getForObject(this.movieUrl + "/" + movieId, Movie.class);
+        return movie;
     }
 }
