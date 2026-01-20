@@ -1,10 +1,10 @@
 package com.lauracercas.moviecards.integrationtest.repositories;
 
 import com.lauracercas.moviecards.model.Actor;
-import com.lauracercas.moviecards.repositories.ActorJPA;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.Optional;
@@ -20,7 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ActorJPAIT {
 
     @Autowired
-    private ActorJPA actorJPA;
+    private RestTemplate template;
+    private final String actorUrl = "https://moviecards-service-plaza.azurewebsites.net/actors";
 
     @Test
     public void testSaveActor() {
@@ -29,11 +30,12 @@ public class ActorJPAIT {
         actor.setBirthDate(new Date());
         actor.setCountry("spain");
 
-        Actor savedActor = actorJPA.save(actor);
+        Actor savedActor = template.postForObject(this.actorUrl, actor, Actor.class);
 
         assertNotNull(savedActor.getId());
 
-        Optional<Actor> foundActor = actorJPA.findById(savedActor.getId());
+        Actor found = template.getForObject(this.actorUrl + "/" + savedActor.getId(), Actor.class);
+        Optional<Actor> foundActor = Optional.ofNullable(found);
 
         assertTrue(foundActor.isPresent());
         assertEquals(savedActor, foundActor.get());
@@ -44,9 +46,10 @@ public class ActorJPAIT {
         Actor actor = new Actor();
         actor.setName("actor");
         actor.setBirthDate(new Date());
-        Actor savedActor = actorJPA.save(actor);
+        Actor savedActor = template.postForObject(this.actorUrl, actor, Actor.class);
 
-        Optional<Actor> foundActor = actorJPA.findById(savedActor.getId());
+        Actor found = template.getForObject(this.actorUrl + "/" + savedActor.getId(), Actor.class);
+        Optional<Actor> foundActor = Optional.ofNullable(found);
 
         assertTrue(foundActor.isPresent());
         assertEquals(savedActor, foundActor.get());

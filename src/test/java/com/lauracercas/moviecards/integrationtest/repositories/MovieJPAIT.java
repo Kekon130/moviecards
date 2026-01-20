@@ -1,10 +1,10 @@
 package com.lauracercas.moviecards.integrationtest.repositories;
 
 import com.lauracercas.moviecards.model.Movie;
-import com.lauracercas.moviecards.repositories.MovieJPA;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MovieJPAIT {
 
     @Autowired
-    private MovieJPA movieJPA;
+    private RestTemplate template;
+    private final String movieUrl = "https://moviecards-service-plaza.azurewebsites.net/movies";
 
     @Test
     public void testSaveMovie() {
@@ -32,11 +33,12 @@ public class MovieJPAIT {
         movie.setGenre("Genre");
         movie.setSinopsis("sinopsis");
 
-        Movie savedMovie = movieJPA.save(movie);
+        Movie savedMovie = template.postForObject(this.movieUrl, movie, Movie.class);
 
         assertNotNull(savedMovie.getId());
 
-        Optional<Movie> foundMovie = movieJPA.findById(savedMovie.getId());
+        Movie found = template.getForObject(this.movieUrl + "/" + savedMovie.getId(), Movie.class);
+        Optional<Movie> foundMovie = Optional.ofNullable(found);
 
         assertTrue(foundMovie.isPresent());
         assertEquals(savedMovie, foundMovie.get());
@@ -46,9 +48,11 @@ public class MovieJPAIT {
     public void testFindById() {
         Movie movie = new Movie();
         movie.setTitle("movie2");
-        Movie savedMovie = movieJPA.save(movie);
+        Movie savedMovie = template.postForObject(this.movieUrl, movie, Movie.class);
 
-        Optional<Movie> foundMovie = movieJPA.findById(savedMovie.getId());
+        Movie found = template.getForObject(this.movieUrl + "/" + savedMovie.getId(), Movie.class);
+        Optional<Movie> foundMovie = Optional.ofNullable(found);
+
         assertTrue(foundMovie.isPresent());
         assertEquals(savedMovie, foundMovie.get());
     }
