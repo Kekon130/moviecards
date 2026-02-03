@@ -10,7 +10,7 @@
 		<title>FichasPeliculasApp | Aplicación de gestión de fichas de peliculas</title>
 		<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
 	</head>
-	<body style="background-color: beige">
+	<body style="background-color: lightgray">
 		<div class="container">
 			<div
 				th:if="${message != null}"
@@ -18,7 +18,9 @@
 				th:text="${message}"
 				role="alert"
 			></div>
-			<h1 class="text-center" style="color: darkred">Gestión de peliculas</h1>
+			<h1 class="text-center" style="color: darkred; background-color: beige">
+				Gestión de peliculas
+			</h1>
 			<hr />
 			<div class="card-group text-center">
 				<div class="card">
