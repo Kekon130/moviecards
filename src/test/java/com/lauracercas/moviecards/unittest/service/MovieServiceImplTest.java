@@ -30,7 +30,7 @@ class MovieServiceImplTest {
     @BeforeEach
     public void setUp() {
         closeable = openMocks(this);
-        sut = new MovieServiceImpl(movieJPA);
+        sut = new MovieServiceImpl();
     }
 
     @AfterEach
@@ -76,6 +76,5 @@ class MovieServiceImplTest {
 
         assertEquals("New Movie", result.getTitle());
     }
-
 
 }
