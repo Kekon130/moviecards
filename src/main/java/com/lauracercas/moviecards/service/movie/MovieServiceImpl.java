@@ -1,7 +1,6 @@
 package com.lauracercas.moviecards.service.movie;
 
 import com.lauracercas.moviecards.model.Movie;
-import com.lauracercas.moviecards.repositories.MovieJPA;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private RestTemplate template;
-    private final String url = "https://moviecards-service-plaza.azurewebsites.net/movies";
+    private String url = "https://moviecards-service-plaza.azurewebsites.net/movies";
 
     @Override
     public List<Movie> getAllMovies() {
