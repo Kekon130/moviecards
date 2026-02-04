@@ -31,7 +31,7 @@ class ActorServiceImplTest {
     @BeforeEach
     void setUp() {
         closeable = openMocks(this);
-        sut = new ActorServiceImpl(actorJPA);
+        sut = new ActorServiceImpl();
     }
 
     @AfterEach
