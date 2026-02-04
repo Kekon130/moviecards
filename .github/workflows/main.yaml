@@ -77,6 +77,26 @@ jobs:
             -Dsonar.login=admin \
             -Dsonar.password=root
 
+  stage:
+    runs-on: ubuntu-latest
+    needs: qa
+    if: github.ref != 'refs/heads/main'
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'moviecards-pre-prod-plaza'
+          slot-name: 'Production'
+          package: '*.jar'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_66D776997F49437DA4DCFDAAE5188CC6 }}
+
   deploy:
     runs-on: ubuntu-latest
     needs: qa
