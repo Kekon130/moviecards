@@ -18,7 +18,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Autowired
     private RestTemplate template;
-    private static final String url = "https://moviecards-service-plaza.azurewebsites.net/movies";
+    private String url = "https://moviecards-service-plaza.azurewebsites.net/movies";
 
     @Override
     public List<Movie> getAllMovies() {
